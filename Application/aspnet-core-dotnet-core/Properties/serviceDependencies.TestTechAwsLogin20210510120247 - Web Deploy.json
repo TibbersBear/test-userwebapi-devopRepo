@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "apis1": {
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.ApiManagement/service/test-loginwebapi-100520211037-apiM/apis/userapi",
+      "type": "apis.azure"
+    }
+  }
+}

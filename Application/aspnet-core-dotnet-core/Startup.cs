@@ -1,16 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
+using TestTechAwsLogin.DBAccess;
+using TestTechAwsLogin.Service;
 
-namespace aspnet_core_dotnet_core
+namespace TestTechAwsLogin
 {
     public class Startup
     {
@@ -24,15 +29,22 @@ namespace aspnet_core_dotnet_core
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<CookiePolicyOptions>(options =>
+            #region Using local MongoDb instance
+            services.Configure<DeepestFearDatabaseSettings>(
+                Configuration.GetSection(nameof(DeepestFearDatabaseSettings)));
+            services.AddSingleton<IDeepestFearDbSettings>(sp =>
+                sp.GetRequiredService<IOptions<DeepestFearDatabaseSettings>>().Value);
+            #endregion Using local MongoDb instance
+
+            services.AddSingleton<UserModelService>();
+
+            //services.AddSwaggerGen();
+
+            services.AddControllers().AddNewtonsoftJson(options => options.UseMemberCasing());
+            services.AddSwaggerGen(c =>
             {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "TestTechAwsLogin", Version = "v1" });
             });
-
-
-            services.AddRazorPages();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,20 +53,25 @@ namespace aspnet_core_dotnet_core
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Error");
+                app.UseSwagger();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TestTechAwsLogin v1"));
             }
 
+            app.UseDefaultFiles();
             app.UseStaticFiles();
-            app.UseCookiePolicy();
+
+            app.UseHttpsRedirection();
+
             app.UseRouting();
+
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => {
-                endpoints.MapRazorPages();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
             });
+
+            app.UseSwagger();
         }
     }
 }
