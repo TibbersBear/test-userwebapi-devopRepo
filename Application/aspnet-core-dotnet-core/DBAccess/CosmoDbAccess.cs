@@ -65,14 +65,7 @@ namespace TestTechAwsLogin.DBAccess
         public void CreateUser(UserModel task)
         {
             var collection = GetUsersCollection();
-            try
-            {
-                collection.InsertOne(task);
-            }
-            catch (MongoCommandException ex)
-            {
-                string msg = ex.Message;
-            }
+            collection.InsertOne(task);
         }
 
         public IMongoCollection<UserModel> GetUsersCollection()
@@ -81,6 +74,7 @@ namespace TestTechAwsLogin.DBAccess
             var database = client.GetDatabase(dbName);
             return database.GetCollection<UserModel>(collectionName);
         }
+
 
 
         # region IDisposable

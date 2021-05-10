@@ -103,11 +103,11 @@ function _displayItems(data) {
 
         let editButton = button.cloneNode(false);
         editButton.innerText = 'Edit';
-        editButton.setAttribute('onclick', `displayEditForm(${item.Id})`);
+        editButton.setAttribute('onclick', `displayEditForm("${item.Id}")`);
 
         let deleteButton = button.cloneNode(false);
         deleteButton.innerText = 'Delete';
-        deleteButton.setAttribute('onclick', `deleteItem(${item.Id})`);
+        deleteButton.setAttribute('onclick', `deleteItem("${item.Id}")`);
 
         let tr = tBody.insertRow();
 

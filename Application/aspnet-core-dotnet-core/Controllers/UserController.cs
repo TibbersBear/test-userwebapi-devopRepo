@@ -67,10 +67,21 @@ namespace TestTechAwsLogin.Controllers
 
             if (user == null)
                 return NotFound();
-
-            _userService.Remove(user.Id);
+            try
+            {
+                _userService.Remove(user.Id);
+            }
+            catch (Exception e)
+            {
+                return HandleServerError(e);
+            }
 
             return NoContent();
+        }
+
+        private IActionResult HandleServerError(Exception exception)
+        {
+            return Problem(statusCode: 500, detail: exception.Message);
         }
     }
 }
