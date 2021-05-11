@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using aspnet_core_dotnet_core.Service.Interfaces;
 using MongoDB.Driver;
 using TestTechAwsLogin.DBAccess;
 using TestTechAwsLogin.Models;
 
 namespace TestTechAwsLogin.Service
 {
-    public class UserModelService
+    public class UserModelService : IUserModelService
     {
         private readonly IMongoCollection<UserModel> _UserModels;
         private readonly CosmoDbAccess _dbAccess;
